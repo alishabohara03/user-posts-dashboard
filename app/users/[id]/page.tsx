@@ -1,8 +1,14 @@
 import { getPostsByUser } from "@/services/api";
 
-export default async function UserPosts({ params }: any) {
+export default async function UserPosts({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   try {
-    const res = await getPostsByUser(params.id);
+    const res = await getPostsByUser(id);
     const posts = res.data;
 
     return (
@@ -19,11 +25,7 @@ export default async function UserPosts({ params }: any) {
         </div>
       </div>
     );
-  } catch (error) {
-    return (
-      <div className="p-6">
-        <p>Something went wrong while loading posts.</p>
-      </div>
-    );
+  } catch {
+    return <p className="p-6">Error loading posts</p>;
   }
 }
