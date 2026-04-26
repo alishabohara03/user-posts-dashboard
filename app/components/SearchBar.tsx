@@ -1,16 +1,25 @@
-export default function SearchBar({
-  value,
-  onChange,
-}: {
+
+interface SearchBarProps {
   value: string;
-  onChange: (v: string) => void;
-}) {
+  onChange: (val: string) => void;
+}
+
+export default function SearchBar({ value, onChange }: SearchBarProps) {
   return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Search users..."
-      className="border p-2 w-full mb-4 rounded"
-    />
+    <div className="search-bar">
+      <span className="search-icon"></span>
+      <input
+        type="text"
+        placeholder="Search by name or email..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label="Search users"
+      />
+      {value && (
+        <button className="clear-btn" onClick={() => onChange("")}>
+          ✕
+        </button>
+      )}
+    </div>
   );
 }

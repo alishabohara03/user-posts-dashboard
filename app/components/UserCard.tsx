@@ -1,26 +1,30 @@
-"use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { User } from "@/types";
 
-interface Props {
+interface UserCardProps {
   user: User;
 }
 
-export default function UserCard({ user }: Props) {
-  const router = useRouter();
+export default function UserCard({ user }: UserCardProps) {
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
-    <div className="border rounded-md p-4 shadow-sm flex flex-col gap-2">
-      <h3 className="text-lg font-semibold">{user.name}</h3>
-      <p className="text-sm text-gray-600">{user.email}</p>
-      <p className="text-sm text-gray-600">{user.company.name}</p>
-
-      <button onClick={() => router.push(`/users/${user.id}`)}
-         className="mt-3 px-4 py-2 text-sm rounded bg-black text-white hover:bg-gray-800"
-        >
-        View Posts
-      </button>
+    <div className="user-card">
+      <div className="user-avatar">{initials}</div>
+      <div className="user-info">
+        <h2 className="user-name">{user.name}</h2>
+        <p className="user-email">✉ {user.email}</p>
+        <p className="user-company">{user.company.name}</p>
+      </div>
+      <Link href={`/users/${user.id}`} className="view-posts-btn">
+        View Posts →
+      </Link>
     </div>
   );
 }

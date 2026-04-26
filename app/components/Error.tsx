@@ -1,9 +1,22 @@
-"use client";
 
-export default function Error() {
+interface ErrorProps {
+  message?: string;
+  onRetry?: () => void;
+}
+
+export default function Error({
+  message = "Something went wrong",
+  onRetry,
+}: ErrorProps) {
   return (
-    <div className="p-6">
-      <p>Something went wrong. Please try again.</p>
+    <div className="state-container error">
+      <span className="error-icon">⚠</span>
+      <p className="state-text">{message}</p>
+      {onRetry && (
+        <button className="retry-btn" onClick={onRetry}>
+          Try again
+        </button>
+      )}
     </div>
   );
 }

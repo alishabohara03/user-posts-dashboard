@@ -1,65 +1,49 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
-import { getUsers } from "@/services/api";
+import { useUsers } from "@/hooks/useUsers";
 import UserCard from "@/components/UserCard";
-import { User } from "@/types";
+import SearchBar from "@/components/SearchBar";
+import Loading from "@/components/Loading";
+import Error from "@/components/Error";
 
-export default function Home() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [query, setQuery] = useState("");
-  const [apiIsLoading, setApiIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsers();
-        setUsers(res.data);
-        setFilteredUsers(res.data);
-      } catch {
-        setError(true);
-      } finally {
-        setApiIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleSearch = (value: string) => {
-    setQuery(value);
-
-    const filtered = users.filter(
-      (u) =>
-        u.name.toLowerCase().includes(value.toLowerCase()) ||
-        u.email.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setFilteredUsers(filtered);
-  };
-
-  if (apiIsLoading) return <p className="p-6">Loading users...</p>;
-
-  if (error) return <p className="p-6">Something went wrong</p>;
+export default function HomePage() {
+  const { users, apiIsLoading, error, searchQuery, setSearchQuery } = useUsers();
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">Users</h1>
-
-      <input
-        value={query}
-        onChange={(e) => handleSearch(e.target.value)}
-        placeholder="Search by name or email"
-        className="border p-2 w-full mb-4 rounded"
-      />
-
-      <div className="grid gap-4">
-        {filteredUsers.map((user) => (
-          <UserCard key={user.id} user={user} />
-        ))}
+    <main className="page">
+      <div className="page-header">
+        <h1 className="page-title">
+          <span className="title-accent">Users</span> Dashboard
+        </h1>
+        <p className="page-subtitle">Browse users and explore their posts</p>
       </div>
-    </div>
+
+      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+
+      {apiIsLoading && <Loading text="Loading users..." />}
+      {error && <Error message={error} />}
+
+      {!apiIsLoading && !error && (
+        <>
+          {users.length === 0 ? (
+            <div className="state-container">
+              <p className="state-text">No users match your search.</p>
+            </div>
+          ) : (
+            <>
+              <p className="result-count">
+                {users.length} user{users.length !== 1 ? "s" : ""} found
+              </p>
+              <div className="users-grid">
+                {users.map((user) => (
+                  <UserCard key={user.id} user={user} />
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
+    </main>
   );
 }

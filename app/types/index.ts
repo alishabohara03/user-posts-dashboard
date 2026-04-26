@@ -1,3 +1,4 @@
+
 export interface User {
   id: number;
   name: string;
@@ -5,11 +6,19 @@ export interface User {
   company: {
     name: string;
   };
+  username: string;
+  phone: string;
+  website: string;
 }
 
 export interface Post {
   id: number;
+  userId: number;
   title: string;
   body: string;
-  userId: number;
+}
+
+export interface NewPost {
+  title: string;
+  body: string;
 }
